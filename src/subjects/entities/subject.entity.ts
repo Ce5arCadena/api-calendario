@@ -1,9 +1,10 @@
 import { WeekDay } from "../dtos/create-subject.dto";
 import { User } from "../../users/entities/user.entity";
 import { Schedule } from "../../schedules/entities/schedule.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
+@Unique(['name'])
 export class Subject {
     @PrimaryGeneratedColumn()
     id: number;

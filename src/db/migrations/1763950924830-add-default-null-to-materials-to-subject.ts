@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddColumnStateToUsers1763686913510 implements MigrationInterface {
+export class AddDefaultNullToMaterialsToSubject1763950924830 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            "ALTER TABLE `user` ADD COLUMN `state` BOOLEAN DEFAULT FALSE AFTER `password`"
-        );
+            "ALTER TABLE `subject` MODIFY `materials` JSON NULL"
+        )
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            "ALTER TABLE `user` DROP COLUMN `state`"
-        );
+            "ALTER TABLE `subject` ALTER COLUMN `materials` DROP NOT NULL"
+        )
     }
 
 }

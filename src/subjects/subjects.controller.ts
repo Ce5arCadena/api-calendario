@@ -1,7 +1,17 @@
+import { 
+    Put, 
+    Get, 
+    Post, 
+    Body, 
+    Param, 
+    Query, 
+    Controller, 
+    ParseIntPipe, 
+    DefaultValuePipe
+} from "@nestjs/common";
 import { SubjectService } from "./subjects.service";
+import { ResponseDto } from "src/utils/dto/response.dto";
 import { CreateSubjectDto } from "./dtos/create-subject.dto";
-
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Post, Put, Query, ValidationPipe } from "@nestjs/common";
 import { UpdateSubjectDto } from "./dtos/update-subject.dto";
 
 
@@ -24,7 +34,7 @@ export class SubjectController {
 
     @Post()
     createSubject(@Body() createSubjectDto: CreateSubjectDto) {
-
+        return this.subjectService.createSubject(createSubjectDto);
     }
 
     @Put(':id')

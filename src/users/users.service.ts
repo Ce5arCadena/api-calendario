@@ -42,7 +42,8 @@ export class UsersService {
         message: 'El usuario fue creado',
         icon: 'success',
         ok: true,
-        data: userWithoutPassword
+        data: userWithoutPassword,
+        status: HttpStatus.CREATED
       }
     } catch (error) {
       throw new HttpException({message: 'Error al crear el usuario', icon: 'error', ok: false, status: HttpStatus.INTERNAL_SERVER_ERROR }, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -69,6 +70,7 @@ export class UsersService {
         data: user
       } 
     } catch (error) {
+      console.log('*****', error)
       throw new HttpException({message: 'Error al consultar el usuario', icon: 'error', ok: false, status: HttpStatus.INTERNAL_SERVER_ERROR }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
