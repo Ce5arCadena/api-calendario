@@ -8,8 +8,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseDto } from 'src/utils/dto/response.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtPayload } from 'src/utils/interfaces/jwt-payload.interface';
 
-interface UserResponseInterface {
+export interface UserResponseInterface {
   ok: boolean;
   data?: User
 }
@@ -148,14 +149,51 @@ export class UsersService {
         message: 'Usuario actualizado',
         icon: 'success',
         ok: true,
-        data: userFormat
+        data: userFormat,
+        status: HttpStatus.CREATED
       }
     } catch (error) {
       throw new HttpException({message: 'Error al actualizar el usuario', icon: 'error', ok: false, status: HttpStatus.INTERNAL_SERVER_ERROR }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(jwtPayload: JwtPayload): Promise<ResponseDto> {
+    try {
+      //Obtener usuario autenticado
+      const userAuth = await this.findByEmail(jwtPayload.emailUser);
+      if (!userAuth) {
+        return {
+          message: 'No tiene permiso para ejecutar esta acción.',
+          icon: 'error',
+          ok: false,
+          data: {},
+          status: HttpStatus.UNAUTHORIZED
+        }
+      }
+
+      const user = await this.userRepository.findOneBy({id: userAuth.data?.id});
+      if (!user) {
+        return {
+          message: 'No se encontró el recurso solicitado',
+          icon: 'error',
+          ok: false,
+          data: [],
+          status: HttpStatus.NOT_FOUND
+        }
+      }
+      user.state = false;
+
+      await this.userRepository.save(user);
+
+      return {
+        message: 'Usuario eliminado con éxito',
+        icon: 'error',
+        ok: false,
+        data: [],
+        status: HttpStatus.NO_CONTENT
+      }
+    } catch (error) {
+      throw new HttpException({message: 'Error al eliminar el usuario', icon: 'error', ok: false, status: HttpStatus.INTERNAL_SERVER_ERROR }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

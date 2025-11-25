@@ -2,6 +2,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PublicRoute } from 'src/auth/public-route-decorator';
+import { PayloadJwt } from 'src/utils/decorators/payload-jwt.decorator';
+import type { JwtPayload } from 'src/utils/interfaces/jwt-payload.interface';
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 
 @Controller('users')
@@ -29,8 +31,8 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete('/delete')
+  remove(@PayloadJwt() payload: JwtPayload) {
+    return this.usersService.remove(payload);
   }
 }

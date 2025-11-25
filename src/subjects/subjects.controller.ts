@@ -7,12 +7,14 @@ import {
     Query, 
     Controller, 
     ParseIntPipe, 
-    DefaultValuePipe
+    DefaultValuePipe,
+    Delete,
 } from "@nestjs/common";
 import { SubjectService } from "./subjects.service";
-import { ResponseDto } from "src/utils/dto/response.dto";
 import { CreateSubjectDto } from "./dtos/create-subject.dto";
 import { UpdateSubjectDto } from "./dtos/update-subject.dto";
+import { PayloadJwt } from "src/utils/decorators/payload-jwt.decorator";
+import type { JwtPayload } from "src/utils/interfaces/jwt-payload.interface";
 
 
 @Controller('subjects')
@@ -28,22 +30,22 @@ export class SubjectController {
     }
 
     @Get(':id')
-    getSubject(@Param('id') id: number) {
-        return 'uno solo';
+    getSubject(@Param('id') id: number, @PayloadJwt() payload: JwtPayload) {
+        return this.subjectService.getSubject(id, payload);
     }
 
     @Post()
-    createSubject(@Body() createSubjectDto: CreateSubjectDto) {
-        return this.subjectService.createSubject(createSubjectDto);
+    createSubject(@Body() createSubjectDto: CreateSubjectDto, @PayloadJwt() payload: JwtPayload) {
+        return this.subjectService.createSubject(createSubjectDto, payload);
     }
 
     @Put(':id')
-    updateSubject(@Body() updateSubjectDto: UpdateSubjectDto) {
-
+    updateSubject(@Param('id') id: number, @Body() updateSubjectDto: UpdateSubjectDto, @PayloadJwt() payload: JwtPayload) {
+        return this.subjectService.updateSubject(id, updateSubjectDto, payload);
     }
 
-    @Get(':id')
-    deleteSubject(@Param('id') id: number) {
-
+    @Delete(':id')
+    deleteSubject(@Param('id') id: number, @PayloadJwt() payload: JwtPayload) {
+        return this.subjectService.deleteSubject(id, payload);
     }
 }

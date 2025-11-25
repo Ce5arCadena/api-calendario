@@ -1,6 +1,15 @@
+import { 
+    IsArray, 
+    IsString, 
+    MinLength, 
+    IsNotEmpty, 
+    IsOptional, 
+    ArrayMinSize, 
+    ValidateNested, 
+} from "class-validator";
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
 import { WeekDayDto } from "./weekday.dto";
+import { User } from "src/users/entities/user.entity";
 
 export type HourFormat = `${number}${number}:${number}${number}`;
 export type Day = 'Lunes' | 'Martes' | 'Miercoles' | 'Jueves' | 'Viernes' | 'Sabado' | 'Domingo';
@@ -10,6 +19,7 @@ export type WeekDay = {
     endTime: HourFormat,
     classroom?: string
 }
+
 
 export class CreateSubjectDto {
     @IsString()
@@ -28,8 +38,11 @@ export class CreateSubjectDto {
     @MinLength(3, {message: 'Mínimo 3 carácteres para el nombre del profesor'})
     nameTeacher?: string;
 
+    @IsOptional()
+    user?: User;
+
     @IsArray({ message: 'Formato incorrécto para los materiales.' })
     @IsOptional()
-    @IsString({ each: true})
+    @IsString({ each: true, message: "Los materiales deben ser texto"})
     materials?: string[];
 }

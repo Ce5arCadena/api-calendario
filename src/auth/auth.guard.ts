@@ -36,12 +36,13 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            await this.jwtService.verifyAsync(
+            const payload = await this.jwtService.verifyAsync(
                 token,
                 {
                     secret: process.env.JWTPRIVETKEY
                 }
             );
+            request.user = payload;
         } catch (error) {
             throw new HttpException({
                 message: 'No tiene permiso para ejecutar esta acción.',

@@ -4,11 +4,15 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "src/auth/auth.guard";
 import { SubjectService } from "./subjects.service";
 import { Subject } from "./entities/subject.entity";
+import { UsersModule } from "src/users/users.module";
 import { User } from "src/users/entities/user.entity";
 import { SubjectController } from "./subjects.controller";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Subject, User])],
+    imports: [
+        TypeOrmModule.forFeature([Subject, User]),
+        UsersModule
+    ],
     controllers: [SubjectController],
     providers: [SubjectService, {
         provide: APP_GUARD,
