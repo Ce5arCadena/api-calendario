@@ -51,7 +51,7 @@ export class UsersService {
     }
   }
 
-  async findByEmail(email: string): Promise<UserResponseInterface>  {
+  async findByEmail(email: string, isAuth: boolean = false): Promise<UserResponseInterface>  {
     try {
       if (!email) {
         return {
@@ -59,7 +59,14 @@ export class UsersService {
         }
       }
 
-      const user = await this.userRepository.findOneBy({ email });
+      let userQuery = this.userRepository.createQueryBuilder('user')
+        .select(['user.id', 'user.username', 'user.state', 'user.email']);
+
+      if (isAuth) {
+        userQuery.addSelect('user.password');
+      }
+
+      const user = await userQuery.where('user.email = :email', {email}).getOne();
       if (!user) {
         return {
           ok: false

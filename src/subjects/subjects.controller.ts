@@ -24,9 +24,11 @@ export class SubjectController {
     @Get()
     allSubjects(
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query('limit', new DefaultValuePipe(10),ParseIntPipe) limit: number,
+        @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+        @Query('search', new DefaultValuePipe('')) search: string,
+        @PayloadJwt() payload: JwtPayload
     ) {
-        return 'lista de todos';
+        return this.subjectService.getAll(page, limit, search, payload);
     }
 
     @Get(':id')

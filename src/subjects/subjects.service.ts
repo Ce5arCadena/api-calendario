@@ -3,7 +3,7 @@ import {
     HttpStatus, 
     HttpException, 
 } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Subject } from "./entities/subject.entity";
 import { UsersService } from "src/users/users.service";
@@ -21,6 +21,61 @@ export class SubjectService {
         private subjectRepository: Repository<Subject>,
         private userService: UsersService
     ) {}
+
+    async getAll(page: number, limit: number, search: string, payload: JwtPayload) {
+        try {
+            //Obtener usuario autenticado
+            const userAuth = await this.userService.findByEmail(payload.emailUser);
+            if (!userAuth || !userAuth.data?.state) {
+                return {
+                    message: 'No tiene permiso para ejecutar esta acción.',
+                    icon: 'error',
+                    ok: false,
+                    data: {},
+                    status: HttpStatus.UNAUTHORIZED
+                }
+            }
+
+            const conditions = {
+                where: {
+                    user: userAuth.data,
+                    name: Like(`%${search}%`)
+                }
+            }
+
+            const [subjects, total] = await this.subjectRepository.findAndCount({
+                take: limit,
+                skip: (page - 1) * limit,
+                where: conditions.where
+            });
+
+            if (total <= 0) {
+                return {
+                    message: 'Lista de materias',
+                    icon: 'success',
+                    ok: true,
+                    data: {
+                        subjects: [],
+                        total: 0
+                    },
+                    status: HttpStatus.NO_CONTENT,
+                }    
+            }
+
+            return {
+                message: 'Lista de materias',
+                icon: 'success',
+                ok: true,
+                data: {
+                    subjects: subjects,
+                    total
+                },
+                status: HttpStatus.NO_CONTENT,
+            }
+        } catch (error) {
+            throw new HttpException({message: 'Error al obtener las materias', icon: 'error', ok: false, status: HttpStatus.INTERNAL_SERVER_ERROR }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     async getSubject(id: number, payload: JwtPayload): Promise<ResponseDto>{
         try {

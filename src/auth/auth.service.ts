@@ -14,7 +14,7 @@ export class AuthService {
 
     async signIn(signInDto: SignInDto): Promise<ResponseDto> {
         try {
-            const user = await this.usersService.findByEmail(signInDto.email);
+            const user = await this.usersService.findByEmail(signInDto.email, true);
             if (!user.ok) {
                 return {
                     message: 'Correo y/o email incorrectos',
