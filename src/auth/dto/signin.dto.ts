@@ -9,3 +9,8 @@ export class SignInDto {
     @IsNotEmpty({ message: 'La contraseña es requerida'})
     password: string;
 }
+
+export class PayloadJwt {
+    emailUser: string;
+    username: string;
+}

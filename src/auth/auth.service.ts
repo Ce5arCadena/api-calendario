@@ -1,13 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { SignInDto } from './dto/signin.dto';
+import { PayloadJwt, SignInDto } from './dto/signin.dto';
 import { UsersService } from 'src/users/users.service';
 import { ResponseDto } from 'src/utils/dto/response.dto';
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
     constructor(
+        @Inject(forwardRef(() => UsersService))
         private usersService: UsersService,
         private jwtService: JwtService
     ) {}
@@ -48,7 +49,7 @@ export class AuthService {
             }
 
             const payload = { emailUser: emailUser, username };
-            const token = await this.jwtService.signAsync(payload);
+            const token = await this.generateToken(payload);
 
             return {
                 message: 'Login éxitoso',
@@ -61,5 +62,15 @@ export class AuthService {
             console.log(error);
             throw new UnauthorizedException();
         };
+    }
+
+    async generateToken(payload: PayloadJwt): Promise<string> {
+        try {
+            const token = await this.jwtService.signAsync(payload);
+            return token;
+        } catch (error) {
+            console.log('Error al generar el token', error);
+            throw new UnauthorizedException();
+        }
     }
 }

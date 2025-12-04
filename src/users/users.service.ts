@@ -7,8 +7,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseDto } from 'src/utils/dto/response.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtPayload } from 'src/utils/interfaces/jwt-payload.interface';
+import { AuthService } from 'src/auth/auth.service';
 
 export interface UserResponseInterface {
   ok: boolean;
@@ -19,7 +20,9 @@ export interface UserResponseInterface {
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ResponseDto> {
@@ -38,12 +41,14 @@ export class UsersService {
 
       const newUser = await this.userRepository.save({...createUserDto, password: hashPassword});
       const userWithoutPassword = plainToInstance(UserResponseDto, newUser);
+      const token = await this.authService.generateToken({emailUser: newUser.email, username: newUser.username});
 
       return {
         message: 'El usuario fue creado',
         icon: 'success',
         ok: true,
         data: userWithoutPassword,
+        token,
         status: HttpStatus.CREATED
       }
     } catch (error) {
