@@ -4,7 +4,7 @@ import { Schedule } from "../../schedules/entities/schedule.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
-@Unique(['name'])
+@Unique(['name', 'user'])
 export class Subject {
     @PrimaryGeneratedColumn()
     id: number;

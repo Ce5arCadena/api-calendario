@@ -128,7 +128,7 @@ export class SubjectService {
                 }
             }
 
-            const existSubjectByName = await this.subjectRepository.findOneBy({name: subject.name});
+            const existSubjectByName = await this.subjectRepository.findOneBy({name: subject.name, user: userAuth.data});
             if (existSubjectByName) {
                 return {
                     message: 'Ya existe una materia con este nombre.',
