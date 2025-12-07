@@ -175,6 +175,7 @@ export class SubjectService {
     async updateSubject(id: number, subject: UpdateSubjectDto, payload: JwtPayload): Promise<ResponseDto> {
         try {
             //Obtener usuario autenticado
+            console.log(subject)
             const userAuth = await this.userService.findByEmail(payload.emailUser);
             if (!userAuth || !userAuth.data?.state) {
                 return {
@@ -197,7 +198,7 @@ export class SubjectService {
             }
 
             if (subject.name) {
-                const nameSubjectExist = await this.subjectRepository.findOneBy({ name: subject.name });
+                const nameSubjectExist = await this.subjectRepository.findOneBy({ name: subject.name, user: userAuth.data });
                 if (nameSubjectExist && subjectFind.id !== nameSubjectExist.id) {
                     return {
                         message: 'Ya existe una materia con este nombre.',
