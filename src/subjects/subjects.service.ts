@@ -185,7 +185,6 @@ export class SubjectService {
                     status: HttpStatus.UNAUTHORIZED
                 }
             }
-
             const subjectFind = await this.subjectRepository.findOneBy({ id });
             if (!subjectFind) {
                 return {
@@ -208,7 +207,7 @@ export class SubjectService {
                         status: HttpStatus.CONFLICT
                     }
                 }
-                subject.name = subject.name.trim();
+                subjectFind.name = subject.name.trim();
             }
 
             if (subject.weekDays) {

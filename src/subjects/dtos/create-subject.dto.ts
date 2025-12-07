@@ -17,7 +17,7 @@ export type WeekDay = {
     day: Day,
     startTime: HourFormat,
     endTime: HourFormat,
-    classroom?: string
+    classroom: string
 }
 
 
@@ -33,7 +33,7 @@ export class CreateSubjectDto {
     @Type(() => WeekDayDto)
     weekDays: WeekDay[];
 
-    @IsOptional()
+    @IsNotEmpty({message: 'El nombre del profesor es requerido'})
     @IsString({message: 'Solo carácteres para el nombre del profesor'})
     @MinLength(3, {message: 'Mínimo 3 carácteres para el nombre del profesor'})
     nameTeacher?: string;
