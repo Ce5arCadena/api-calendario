@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { PayloadJwt } from 'src/utils/decorators/payload-jwt.decorator';
+import type { JwtPayload } from 'src/utils/interfaces/jwt-payload.interface';
 
 @Controller('schedules')
 export class SchedulesController {
@@ -13,8 +15,8 @@ export class SchedulesController {
   }
 
   @Get()
-  findAll() {
-    return this.schedulesService.findAll();
+  findAll(@PayloadJwt() payload: JwtPayload) {
+    return this.schedulesService.findAll(payload);
   }
 
   @Get(':id')

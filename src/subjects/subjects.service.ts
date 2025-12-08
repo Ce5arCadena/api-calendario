@@ -22,7 +22,7 @@ export class SubjectService {
         private userService: UsersService
     ) {}
 
-    async getAll(page: number, limit: number, search: string, payload: JwtPayload) {
+    async getAll(page: number, limit: number, search: string, payload: JwtPayload): Promise<ResponseDto> {
         try {
             //Obtener usuario autenticado
             const userAuth = await this.userService.findByEmail(payload.emailUser);
